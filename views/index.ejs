@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('partials/head.ejs') %>
+  <body>
+    <%- include('partials/navbar.ejs') %>
+    <div class="container">
+      <br />
+      <div class="row">
+        <% messages.forEach(function(message) { %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title"><%= message.content.title %></h5>
+            <% if (isUserLoggedIn && user.roles.includes('member')) { %>
+            <h6 class="card-subtitle mb-2 text-muted">
+              <%= message.user.full_name %>
+            </h6>
+            <p class="card-text">
+              <small class="text-muted"
+                ><%= message.created_at_formatted %></small
+              >
+            </p>
+            <% } %>
+            <p class="card-text"><%= message.content.body %></p>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </body>
+</html>
