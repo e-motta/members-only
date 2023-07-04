@@ -1,76 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-router.get("/", function (req, res, next) {
-  const placeholderMessages = [
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server.",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server.",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server.",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. ",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server.",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server.",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-  ];
-  const placeHolderUser = { roles: ["member"] };
+const indexController = require("../controllers/indexController");
 
-  res.render("index", {
-    user: placeHolderUser,
-    isUserLoggedIn: !!placeHolderUser,
-    messages: placeholderMessages,
-  });
-});
+router.get("/", indexController.index_get);
+
+router.get("/signup", indexController.user_create_get);
+
+router.post("/signup", indexController.user_create_post);
+
+router.get("/login", indexController.user_login_get);
+
+router.post("/login", indexController.user_login_post);
 
 module.exports = router;
