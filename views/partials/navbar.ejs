@@ -7,20 +7,23 @@
   </div>
   <div class="ml-auto">
     <ul class="navbar-nav">
-      <% if (!isUserLoggedIn) { %>
-      <div style="display: flex; gap: 30px">
+      <div style="display: flex; gap: 30px; align-items: center">
+        <% if (!isUserLoggedIn) { %>
         <li class="nav-item">
           <a class="nav-link" href="/login">Log In</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/signup">Sign Up</a>
         </li>
+        <% } else { %>
+        <li class="nav-item">
+          <span class="nav-text">Logged in as <%= user.full_name %></span>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Log Out</a>
+        </li>
+        <% } %>
       </div>
-      <% } else { %>
-      <li class="nav-item">
-        <a class="nav-link" href="/logout">Log Out</a>
-      </li>
-      <% } %>
     </ul>
   </div>
 </nav>

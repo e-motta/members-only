@@ -68,17 +68,21 @@ exports.index_get = function (req, res, next) {
       created_at_formatted: "Monday, January 1, 1970",
     },
   ];
-  const placeHolderUser = null; // { roles: ["member"] }
 
   res.render("index", {
     title: "Members Only",
-    user: placeHolderUser,
-    isUserLoggedIn: !!placeHolderUser,
+    user: res.locals.currentUser,
+    isUserLoggedIn: !!res.locals.currentUser,
     messages: placeholderMessages,
   });
 };
 
 exports.user_create_get = function (req, res, next) {
+  if (res.locals.currentUser) {
+    res.redirect("/");
+    return;
+  }
+
   res.render("signup", {
     title: "Sign Up",
     user: null,
@@ -172,6 +176,11 @@ exports.user_create_post = [
 ];
 
 exports.user_login_get = function (req, res, next) {
+  if (res.locals.currentUser) {
+    res.redirect("/");
+    return;
+  }
+
   res.render("login", {
     title: "Log In",
     user: { email: "" },
@@ -222,3 +231,12 @@ exports.user_login_post = [
     })(req, res, next);
   },
 ];
+
+exports.user_logout_get = function (req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+};
