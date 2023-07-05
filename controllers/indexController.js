@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
-const passport = require("passport");
+const passport = require("../auth");
 
 const UserSchema = require("../models/users");
 
@@ -192,45 +192,33 @@ exports.user_login_get = function (req, res, next) {
   });
 };
 
-exports.user_login_post = [
-  body("email", "Email must not be empty.")
-    .trim()
-    .isLength({ min: 1 })
-    .escape(),
-  body("password", "Password must not be empty.")
-    .trim()
-    .isLength({ min: 1 })
-    .escape(),
+exports.user_login_post = function (req, res, next) {
+  req.body.username = req.body.email;
 
-  function (req, res, next) {
-    req.body.username = req.body.email;
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
 
-    passport.authenticate("local", (err, user, info) => {
+    if (!user) {
+      return res.render("login", {
+        title: "Log In",
+        user: { email: req.body.email },
+        isUserLoggedIn: false,
+        message: null,
+        errors: [info.message],
+      });
+    }
+
+    req.logIn(user, (err) => {
       if (err) {
         return next(err);
       }
 
-      console.log({ err, user, info });
-      if (!user) {
-        return res.render("login", {
-          title: "Log In",
-          user: { email: req.body.email },
-          isUserLoggedIn: false,
-          message: null,
-          errors: [info.message],
-        });
-      }
-
-      req.logIn(user, (err) => {
-        if (err) {
-          return next(err);
-        }
-
-        res.redirect("/");
-      });
-    })(req, res, next);
-  },
-];
+      res.redirect("/");
+    });
+  })(req, res, next);
+};
 
 exports.user_logout_get = function (req, res, next) {
   req.logout(function (err) {
