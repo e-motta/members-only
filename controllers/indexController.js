@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
+const bcrypt = require("bcrypt");
+const passport = require("passport");
 
 const UserSchema = require("../models/users");
 
@@ -103,33 +105,32 @@ exports.user_create_post = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
+  body("email").custom(async (value) => {
+    value = value.toLowerCase();
+    const emailExists = await UserSchema.exists({ email: value });
+    if (emailExists) {
+      throw new Error("Email already in use.");
+    }
+  }),
   body("password", "Password must not be empty.")
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("confirm_password", "Confirm password must not be empty.")
+  body("confirmPassword", "Confirm password must not be empty.")
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("confirm_password").custom((value, { req }) => {
+  body("confirmPassword").custom((value, { req }) => {
     if (value !== req.body.password) {
       throw new Error("Password confirmation does not match password.");
     }
     return true;
   }),
+
   asyncHandler(async function (req, res, next) {
     const errors = validationResult(req);
 
     const { first_name, last_name, email, password } = req.body;
-
-    const user = new UserSchema({
-      first_name,
-      last_name,
-      email,
-      hashed_password: password,
-      roles: [],
-      created_at: new Date(),
-    });
 
     if (!errors.isEmpty()) {
       res.render("signup", {
@@ -146,16 +147,78 @@ exports.user_create_post = [
       return;
     }
 
-    res.redirect("/");
+    try {
+      bcrypt.hash(password, 10, async (err, hashed_password) => {
+        if (err) {
+          return next(err);
+        }
+
+        const user = new UserSchema({
+          first_name,
+          last_name,
+          email,
+          hashed_password,
+          roles: [],
+          created_at: new Date(),
+        });
+
+        await user.save();
+        res.redirect("/login?signup=success");
+      });
+    } catch (err) {
+      next(err);
+    }
   }),
 ];
 
 exports.user_login_get = function (req, res, next) {
-  res.render("login", { title: "Log In", user: null, isUserLoggedIn: false });
+  res.render("login", {
+    title: "Log In",
+    user: { email: "" },
+    isUserLoggedIn: false,
+    message: req.query.signup
+      ? "Sign up successful! Please log in to continue"
+      : null,
+    errors: [],
+  });
 };
 
-exports.user_login_post = function (req, res, next) {
-  const { email, password } = req.body;
+exports.user_login_post = [
+  body("email", "Email must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("password", "Password must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
 
-  res.redirect("/");
-};
+  function (req, res, next) {
+    req.body.username = req.body.email;
+
+    passport.authenticate("local", (err, user, info) => {
+      if (err) {
+        return next(err);
+      }
+
+      console.log({ err, user, info });
+      if (!user) {
+        return res.render("login", {
+          title: "Log In",
+          user: { email: req.body.email },
+          isUserLoggedIn: false,
+          message: null,
+          errors: [info.message],
+        });
+      }
+
+      req.logIn(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+
+        res.redirect("/");
+      });
+    })(req, res, next);
+  },
+];

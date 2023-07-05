@@ -2,7 +2,9 @@
 <html lang="en">
   <%- include('partials/head.ejs') %>
   <body>
-    <%- include('partials/navbar.ejs') %>
+    <%- include('partials/navbar.ejs') %> <% if (message) { %>
+    <div class="alert alert-success" role="alert"><%= message %></div>
+    <% } %>
     <div class="container">
       <h1><%= title %></h1>
       <form action="" method="post">
@@ -12,7 +14,9 @@
             type="email"
             class="form-control"
             id="email"
+            name="email"
             placeholder="Enter your email"
+            value="<%= user.email %>"
           />
         </div>
         <div class="mb-3">
@@ -21,11 +25,22 @@
             type="password"
             class="form-control"
             id="password"
+            name="password"
             placeholder="Enter your password"
           />
         </div>
         <button type="submit" class="btn btn-primary">Log In</button>
       </form>
+      <br />
+      <% if (errors.length > 0) { %>
+      <div class="alert alert-danger" role="alert">
+        <ul>
+          <% errors.forEach(function(error) { %>
+          <li><%= error %></li>
+          <% }); %>
+        </ul>
+      </div>
+      <% } %>
     </div>
   </body>
 </html>
