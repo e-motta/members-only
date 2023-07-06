@@ -1,10 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
-const passport = require("../auth");
+const passport = require("./auth");
 
-const UserSchema = require("../models/users");
-const MessageSchema = require("../models/messages");
+const UserSchema = require("./models/users");
+const MessageSchema = require("./models/messages");
 
 exports.index_get = asyncHandler(async function (req, res, next) {
   const messages = await MessageSchema.find({})
