@@ -31,16 +31,7 @@
         </div>
         <button type="submit" class="btn btn-primary">Log In</button>
       </form>
-      <br />
-      <% if (errors.length > 0) { %>
-      <div class="alert alert-danger" role="alert">
-        <ul>
-          <% errors.forEach(function(error) { %>
-          <li><%= error %></li>
-          <% }); %>
-        </ul>
-      </div>
-      <% } %>
+      <%- include('partials/errors.ejs') %>
     </div>
   </body>
 </html>

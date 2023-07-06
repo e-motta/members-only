@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('partials/head.ejs') %>
+  <body>
+    <%- include('partials/navbar.ejs') %>
+    <div class="container">
+      <br />
+      <form action="" method="POST">
+        <% if (isUserLoggedIn && !user.roles.includes('member')) { %>
+        <div class="mb-3">
+          <label for="membership" class="form-label">
+            To join as a member, please enter the Secret Code below:
+          </label>
+          <input
+            type="password"
+            class="form-control"
+            id="membership"
+            name="membership"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Join</button>
+        <% } else { %>
+          <div class="mb-3">
+            <p>You are currently a member.</p>
+            <form action="" method="post">
+              <button 
+                type="submit" 
+                class="btn btn-primary" 
+                id="membership"
+                name="membership"
+                value="cancel-486b129"
+              >
+                Cancel membership
+              </button>
+            </form>
+          </div>
+        <% } %>
+        <%- include('partials/errors.ejs') %>
+    </div>
+  </body>
+</html>

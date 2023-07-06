@@ -19,4 +19,8 @@ router.get("/new_message", indexController.new_message_get);
 
 router.post("/new_message", indexController.new_message_post);
 
+router.get("/members", indexController.members_get);
+
+router.post("/members", indexController.members_post);
+
 module.exports = router;

@@ -1,7 +1,11 @@
 <nav class="navbar navbar-light bg-light px-4">
-  <div>
+  <div style="display: flex; align-items: center">
     <a class="navbar-brand" href="/">Members Only</a>
-    <% if (isUserLoggedIn && user.roles.includes('member')) { %>
+    <% if (isUserLoggedIn) { %> <% if (user.roles.includes('member')) { %>
+    <a class="btn btn-secondary ms-5" href="/members">Membership</a>
+    <% } else { %>
+    <a class="btn btn-primary ms-5" href="/members">Membership</a>
+    <% } %> <% } %> <% if (isUserLoggedIn && user.roles.includes('member')) { %>
     <a class="btn btn-primary ms-5" href="/new_message">New Message</a>
     <% } %>
   </div>

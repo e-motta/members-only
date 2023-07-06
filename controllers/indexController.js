@@ -20,7 +20,6 @@ exports.index_get = asyncHandler(async function (req, res, next) {
   });
 });
 
-// todo: use async handler for all controller functions
 exports.user_create_get = asyncHandler(function (req, res, next) {
   if (res.locals.currentUser) {
     res.redirect("/");
@@ -226,6 +225,74 @@ exports.new_message_post = [
 
       await message.save();
       res.redirect("/");
+    } catch (err) {
+      next(err);
+    }
+  }),
+];
+
+exports.members_get = function (req, res, next) {
+  if (!res.locals.currentUser) {
+    res.redirect("/login");
+    return;
+  }
+
+  res.render("members", {
+    title: "Membership",
+    user: res.locals.currentUser,
+    isUserLoggedIn: !!res.locals.currentUser,
+    errors: [],
+  });
+};
+
+exports.members_post = [
+  body("membership", "Membership must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("membership").custom(async (value) => {
+    if (value !== process.env.MEMBERSHIP_CODE && value !== "cancel-486b129") {
+      throw new Error("Invalid membership code.");
+    }
+    return true;
+  }),
+
+  asyncHandler(async function (req, res, next) {
+    const errors = validationResult(req);
+
+    const { membership } = req.body;
+
+    if (membership === "cancel-486b129") {
+      try {
+        const user = await UserSchema.findById(res.locals.currentUser._id);
+        user.roles = user.roles.filter((role) => role !== "member");
+        await user.save();
+
+        res.redirect("/");
+        return;
+      } catch (err) {
+        next(err);
+      }
+    }
+
+    if (!errors.isEmpty()) {
+      res.render("members", {
+        title: "Membership",
+        user: res.locals.currentUser,
+        isUserLoggedIn: !!res.locals.currentUser,
+        errors: errors.array(),
+      });
+      return;
+    }
+
+    try {
+      if (membership === process.env.MEMBERSHIP_CODE) {
+        const user = await UserSchema.findById(res.locals.currentUser._id);
+        user.roles = [...user.roles, "member"];
+        await user.save();
+
+        res.redirect("/");
+      }
     } catch (err) {
       next(err);
     }
