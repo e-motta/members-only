@@ -16,7 +16,9 @@
             </h6>
             <p class="card-text">
               <small class="text-muted"
-                ><%= message.created_at_formatted %></small
+                ><time datetime="<%= message.created_at %>"
+                  ><%= message.created_at_formatted %></time
+                ></small
               >
             </p>
             <% } %>

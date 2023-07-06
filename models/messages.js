@@ -11,7 +11,7 @@ const MessageSchema = new Schema({
 });
 
 MessageSchema.virtual("created_at_formatted").get(function () {
-  return this.created_at.toLocaleDateString("en-US", {
+  return this.created_at.toLocaleTimeString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
