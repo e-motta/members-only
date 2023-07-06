@@ -15,4 +15,8 @@ router.post("/login", indexController.user_login_post);
 
 router.get("/logout", indexController.user_logout_get);
 
+router.get("/new_message", indexController.new_message_get);
+
+router.post("/new_message", indexController.new_message_post);
+
 module.exports = router;

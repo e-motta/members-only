@@ -37,7 +37,6 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(function (req, res, next) {
-  console.log(res.locals, req.user);
   res.locals.currentUser = req.user;
   next();
 });

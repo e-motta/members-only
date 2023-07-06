@@ -4,78 +4,18 @@ const bcrypt = require("bcrypt");
 const passport = require("../auth");
 
 const UserSchema = require("../models/users");
+const MessageSchema = require("../models/messages");
 
-exports.index_get = function (req, res, next) {
-  const placeholderMessages = [
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server.",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server.",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server.",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. This is a message from the server. ",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server.",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-    {
-      content: {
-        title: "Hello World!",
-        body: "This is a message from the server.",
-      },
-      user: {
-        full_name: "John Doe",
-      },
-      created_at_formatted: "Monday, January 1, 1970",
-    },
-  ];
+exports.index_get = asyncHandler(async function (req, res, next) {
+  const messages = await MessageSchema.find({}).populate("user").exec();
 
   res.render("index", {
     title: "Members Only",
     user: res.locals.currentUser,
     isUserLoggedIn: !!res.locals.currentUser,
-    messages: placeholderMessages,
+    messages,
   });
-};
+});
 
 exports.user_create_get = function (req, res, next) {
   if (res.locals.currentUser) {
@@ -193,8 +133,6 @@ exports.user_login_get = function (req, res, next) {
 };
 
 exports.user_login_post = function (req, res, next) {
-  req.body.username = req.body.email;
-
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return next(err);
@@ -228,3 +166,64 @@ exports.user_logout_get = function (req, res, next) {
     res.redirect("/");
   });
 };
+
+exports.new_message_get = function (req, res, next) {
+  if (!res.locals.currentUser) {
+    res.redirect("/login");
+    return;
+  }
+
+  res.render("new_message", {
+    title: "New Message",
+    user: res.locals.currentUser,
+    isUserLoggedIn: !!res.locals.currentUser,
+    message: {
+      title: "",
+      body: "",
+    },
+    errors: [],
+  });
+};
+
+exports.new_message_post = [
+  body("title", "Title must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("body", "Body must not be empty.").trim().isLength({ min: 1 }).escape(),
+  asyncHandler(async function (req, res, next) {
+    const errors = validationResult(req);
+
+    const { title, body } = req.body;
+
+    if (!errors.isEmpty()) {
+      res.render("new_message", {
+        title: "New Message",
+        user: res.locals.currentUser,
+        isUserLoggedIn: !!res.locals.currentUser,
+        message: {
+          title,
+          body,
+        },
+        errors: errors.array(),
+      });
+      return;
+    }
+
+    try {
+      const message = new MessageSchema({
+        content: {
+          title,
+          body,
+        },
+        user: res.locals.currentUser._id,
+        created_at: new Date(),
+      });
+
+      await message.save();
+      res.redirect("/");
+    } catch (err) {
+      next(err);
+    }
+  }),
+];

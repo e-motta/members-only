@@ -2,7 +2,7 @@
   <div>
     <a class="navbar-brand" href="/">Members Only</a>
     <% if (isUserLoggedIn && user.roles.includes('member')) { %>
-    <a class="btn btn-primary ms-5" href="/post">New Message</a>
+    <a class="btn btn-primary ms-5" href="/new_message">New Message</a>
     <% } %>
   </div>
   <div class="ml-auto">
@@ -17,7 +17,10 @@
         </li>
         <% } else { %>
         <li class="nav-item">
-          <span class="nav-text">Logged in as <%= user.full_name %></span>
+          <span class="nav-text"
+            >Logged in as
+            <span style="font-weight: bold"><%= user.full_name %></span></span
+          >
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/logout">Log Out</a>
