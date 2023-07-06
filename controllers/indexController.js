@@ -7,7 +7,10 @@ const UserSchema = require("../models/users");
 const MessageSchema = require("../models/messages");
 
 exports.index_get = asyncHandler(async function (req, res, next) {
-  const messages = await MessageSchema.find({}).populate("user").exec();
+  const messages = await MessageSchema.find({})
+    .sort({ created_at: -1 })
+    .populate("user")
+    .exec();
 
   res.render("index", {
     title: "Members Only",
@@ -17,7 +20,8 @@ exports.index_get = asyncHandler(async function (req, res, next) {
   });
 });
 
-exports.user_create_get = function (req, res, next) {
+// todo: use async handler for all controller functions
+exports.user_create_get = asyncHandler(function (req, res, next) {
   if (res.locals.currentUser) {
     res.redirect("/");
     return;
@@ -34,7 +38,7 @@ exports.user_create_get = function (req, res, next) {
     },
     errors: [],
   });
-};
+});
 
 exports.user_create_post = [
   body("first_name", "First name must not be empty.")
@@ -132,7 +136,7 @@ exports.user_login_get = function (req, res, next) {
   });
 };
 
-exports.user_login_post = function (req, res, next) {
+exports.user_login_post = asyncHandler(function (req, res, next) {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return next(err);
@@ -156,7 +160,7 @@ exports.user_login_post = function (req, res, next) {
       res.redirect("/");
     });
   })(req, res, next);
-};
+});
 
 exports.user_logout_get = function (req, res, next) {
   req.logout(function (err) {
