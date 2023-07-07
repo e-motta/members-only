@@ -4,7 +4,7 @@
 <div class="alert alert-danger" role="alert">
   <ul>
     <% errors.forEach(function(error) { %>
-    <li><%= error.msg ?? error %></li>
+    <li><%- error.msg ?? error %></li>
     <% }); %>
   </ul>
 </div>

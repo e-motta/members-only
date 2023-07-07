@@ -5,7 +5,7 @@
     <span class="nav-text collapse navbar-collapse">
       Logged in as
       <span style="font-weight: bold" class="ms-2">
-        <%= user.full_name %>
+        <%- user.full_name %>
       </span>
     </span>
     <% } %>
@@ -22,13 +22,12 @@
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div
-    class="collapse navbar-collapse"
-    id="navbarSupportedContent"
-    style="display: flex; justify-content: flex-end"
-  >
-    <ul class="navbar-nav mr-auto" style="display: flex; align-items: center">
-      <li class="nav-item pt-1 pe-5">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul
+      class="navbar-nav ms-auto pt-1"
+      style="display: flex; align-items: center"
+    >
+      <li class="nav-item pt-1 ps-5 ms-auto">
         <% if (isUserLoggedIn) { %> <% if (user.roles.includes('member')) { %>
         <a class="btn btn-secondary" href="/members">Membership</a>
         <% } else { %>
@@ -37,20 +36,20 @@
       </li>
       <!--  -->
       <% if (isUserLoggedIn && user.roles.includes('member')) { %>
-      <li class="nav-item pt-1 pe-5">
+      <li class="nav-item pt-1 ps-5 ms-auto">
         <a class="btn btn-primary" href="/new_message">New Message</a>
       </li>
       <% } %>
       <!--  -->
       <% if (!isUserLoggedIn) { %>
-      <li class="nav-item pt-1 pe-5">
+      <li class="nav-item pt-1 ps-5 ms-auto">
         <a class="nav-link" href="/login">Log In</a>
       </li>
-      <li class="nav-item pt-1">
+      <li class="nav-item pt-1 ps-5 ms-auto">
         <a class="nav-link" href="/signup">Sign Up</a>
       </li>
       <% } else { %>
-      <li class="nav-item pt-1">
+      <li class="nav-item pt-1 ps-5 ms-auto">
         <a class="nav-link" href="/logout">Log Out</a>
       </li>
       <% } %>

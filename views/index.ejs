@@ -13,14 +13,14 @@
               class="card-title"
               style="display: flex; justify-content: space-between"
             >
-              <%= message.content.title %> <% if (isUserLoggedIn &&
+              <%- message.content.title %> <% if (isUserLoggedIn &&
               user.roles.includes('admin')) { %>
               <form action="/delete_message" method="post">
                 <button
                   type="submit"
                   class="btn btn-outline-danger"
                   name="delete_message"
-                  value="<%= message._id %>"
+                  value="<%- message._id %>"
                 >
                   <i class="bi-trash" style="font-size: 1rem"></i>
                 </button>
@@ -29,17 +29,17 @@
             </h5>
             <% if (isUserLoggedIn && user.roles.includes('member')) { %>
             <h6 class="card-subtitle mb-2 text-muted">
-              <%= message.user.full_name %>
+              <%- message.user.full_name %>
             </h6>
             <p class="card-text">
               <small class="text-muted">
-                <time datetime="<%= message.created_at %>">
-                  <%= message.created_at_formatted %>
+                <time datetime="<%- message.created_at %>">
+                  <%- message.created_at_formatted %>
                 </time>
               </small>
             </p>
             <% } %>
-            <p class="card-text"><%= message.content.body %></p>
+            <p class="card-text"><%- message.content.body %></p>
           </div>
         </div>
         <% }); %>

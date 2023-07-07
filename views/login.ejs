@@ -3,10 +3,10 @@
   <%- include('partials/head.ejs') %>
   <body>
     <%- include('partials/navbar.ejs') %> <% if (message) { %>
-    <div class="alert alert-success" role="alert"><%= message %></div>
+    <div class="alert alert-success" role="alert"><%- message %></div>
     <% } %>
     <div class="container">
-      <h1><%= title %></h1>
+      <h1><%- title %></h1>
       <form action="" method="post">
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
@@ -16,7 +16,7 @@
             id="email"
             name="email"
             placeholder="Enter your email"
-            value="<%= user.email %>"
+            value="<%- user.email %>"
           />
         </div>
         <div class="mb-3">
