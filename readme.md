@@ -14,6 +14,14 @@ To see all the features you need to create an account and become a member, and/o
 - Login for the admin account: `admin@membersonly.com`
 - Password for the admin account: `VerySecretPassword`
 
+## Technology
+
+- App: Express (Node.js)
+- Auth: Passport, Bcrypt
+- Database: MongoDB, mongoose
+- Views: EJS
+- Other: Compression, Helmet, Winston
+
 ## Preview
 
 ![](readme_content/example.gif)
