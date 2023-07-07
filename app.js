@@ -7,6 +7,7 @@ const session = require("express-session");
 require("dotenv").config();
 
 const useDatabase = require("./database");
+const mongoSession = require("./mongoSession");
 const passport = require("./auth");
 const indexRouter = require("./routes/index");
 const adminRouter = require("./routes/admin");
@@ -25,13 +26,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-  })
-);
+app.use(session(mongoSession.config));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
