@@ -3,6 +3,8 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const compression = require("compression");
+const helmet = require("helmet");
 require("dotenv").config();
 
 const logger = require("./logger");
@@ -19,6 +21,16 @@ useDatabase().catch((err) => console.error(err));
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      "script-src": ["'self'", "code.jquery.com", "cdn.jsdelivr.net"],
+    },
+  })
+);
+
+app.use(compression());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
