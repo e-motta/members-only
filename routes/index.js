@@ -19,6 +19,8 @@ router.get("/new_message", controller.new_message_get);
 
 router.post("/new_message", controller.new_message_post);
 
+router.post("/delete_message", controller.delete_message_post);
+
 router.get("/members", controller.members_get);
 
 router.post("/members", controller.members_post);

@@ -7,7 +7,7 @@ const UserSchema = require("./models/users");
 const MessageSchema = require("./models/messages");
 
 exports.index_get = asyncHandler(async function (req, res, next) {
-  const messages = await MessageSchema.find({})
+  const messages = await MessageSchema.find({ deleted: false })
     .sort({ created_at: -1 })
     .populate("user")
     .exec();
@@ -230,6 +230,25 @@ exports.new_message_post = [
     }
   }),
 ];
+
+exports.delete_message_post = asyncHandler(async function (req, res, next) {
+  if (!res.locals.currentUser) {
+    res.redirect("/login");
+    return;
+  }
+
+  const message = await MessageSchema.findById(req.body.delete_message);
+
+  if (!message || res.locals.currentUser.roles.indexOf("admin") === -1) {
+    res.redirect("/");
+    return;
+  }
+
+  message.deleted = true;
+  await message.save();
+
+  res.redirect("/");
+});
 
 exports.members_get = function (req, res, next) {
   if (!res.locals.currentUser) {

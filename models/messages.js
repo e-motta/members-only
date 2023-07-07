@@ -8,6 +8,7 @@ const MessageSchema = new Schema({
   },
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   created_at: { type: Date, required: true },
+  deleted: { type: Boolean, default: false },
 });
 
 MessageSchema.virtual("created_at_formatted").get(function () {
