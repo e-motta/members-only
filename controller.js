@@ -3,10 +3,13 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const passport = require("./auth");
 
+const logger = require("./logger");
 const UserSchema = require("./models/users");
 const MessageSchema = require("./models/messages");
 
 exports.index_get = asyncHandler(async function (req, res, next) {
+  logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
   const messages = await MessageSchema.find({ deleted: false })
     .sort({ created_at: -1 })
     .populate("user")
@@ -21,10 +24,14 @@ exports.index_get = asyncHandler(async function (req, res, next) {
 });
 
 exports.user_create_get = asyncHandler(function (req, res, next) {
+  logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
   if (res.locals.currentUser) {
     res.redirect("/");
     return;
   }
+
+  logger.info("Rendering signup form");
 
   res.render("signup", {
     title: "Sign Up",
@@ -58,6 +65,7 @@ exports.user_create_post = [
     if (emailExists) {
       throw new Error("Email already in use.");
     }
+    return true;
   }),
   body("password", "Password must not be empty.")
     .trim()
@@ -75,6 +83,8 @@ exports.user_create_post = [
   }),
 
   asyncHandler(async function (req, res, next) {
+    logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
     const errors = validationResult(req);
 
     const { first_name, last_name, email, password } = req.body;
@@ -119,6 +129,8 @@ exports.user_create_post = [
 ];
 
 exports.user_login_get = function (req, res, next) {
+  logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
   if (res.locals.currentUser) {
     res.redirect("/");
     return;
@@ -136,6 +148,8 @@ exports.user_login_get = function (req, res, next) {
 };
 
 exports.user_login_post = asyncHandler(function (req, res, next) {
+  logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return next(err);
@@ -162,6 +176,8 @@ exports.user_login_post = asyncHandler(function (req, res, next) {
 });
 
 exports.user_logout_get = function (req, res, next) {
+  logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
   req.logout(function (err) {
     if (err) {
       return next(err);
@@ -171,6 +187,8 @@ exports.user_logout_get = function (req, res, next) {
 };
 
 exports.new_message_get = function (req, res, next) {
+  logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
   if (!res.locals.currentUser) {
     res.redirect("/login");
     return;
@@ -195,6 +213,8 @@ exports.new_message_post = [
     .escape(),
   body("body", "Body must not be empty.").trim().isLength({ min: 1 }).escape(),
   asyncHandler(async function (req, res, next) {
+    logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
     const errors = validationResult(req);
 
     const { title, body } = req.body;
@@ -232,6 +252,8 @@ exports.new_message_post = [
 ];
 
 exports.delete_message_post = asyncHandler(async function (req, res, next) {
+  logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
   if (!res.locals.currentUser) {
     res.redirect("/login");
     return;
@@ -251,6 +273,8 @@ exports.delete_message_post = asyncHandler(async function (req, res, next) {
 });
 
 exports.members_get = function (req, res, next) {
+  logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
   if (!res.locals.currentUser) {
     res.redirect("/login");
     return;
@@ -277,6 +301,8 @@ exports.members_post = [
   }),
 
   asyncHandler(async function (req, res, next) {
+    logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
+
     const errors = validationResult(req);
 
     const { membership } = req.body;

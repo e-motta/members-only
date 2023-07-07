@@ -2,10 +2,10 @@ const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const logger = require("morgan");
 const session = require("express-session");
 require("dotenv").config();
 
+const logger = require("./logger");
 const useDatabase = require("./database");
 const mongoSession = require("./mongoSession");
 const passport = require("./auth");
@@ -20,7 +20,6 @@ useDatabase().catch((err) => console.error(err));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -33,6 +32,7 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(function (req, res, next) {
+  logger.info(`User ID: ${req.user?._id}`);
   res.locals.currentUser = req.user;
   next();
 });
@@ -53,6 +53,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
+  logger.error(`STATUS ${err.status || 500}: ${err.stack}`);
   res.render("error");
 });
 
